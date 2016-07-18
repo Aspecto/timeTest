@@ -1,4 +1,4 @@
-package time_test;
+package timeTest;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -92,11 +92,17 @@ public class TimeTest {
 		output.close();
 		if (consoleOutputEnabled)
 			printToConsole();
+		calcAvgMedianEtc();
 		driver.quit();
 		String verificationErrorString = verificationErrors.toString();
 		if (!"".equals(verificationErrorString)) {
 			fail(verificationErrorString);
 		}
+	}
+	
+	public void calcAvgMedianEtc()
+	{
+		
 	}
 
 	public void printToFile() throws IOException {

@@ -1,4 +1,4 @@
-package time_test;
+package timeTest;
 
 public class Pair<L, R> {
 
