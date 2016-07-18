@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="Time_test_suite">
-<parameter name="reportFilePath" value="C:\TEST\asfa.txt" />
+<parameter name="reportFilePath" value="C:\TEST\test.txt" />
 <parameter name="fileOutput" value="true" />
 <parameter name="consoleOutput" value="true" />
   <test name="time_test">
