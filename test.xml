@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="Time_test_suite">
-<parameter name="reportFilePath" value="C:\TEST\test.csv" />
+<parameter name="reportFilePath" value=".\test.csv" />
 <parameter name="fileOutput" value="true" />
 <parameter name="consoleOutput" value="true" />
   <test name="TimeTest">
