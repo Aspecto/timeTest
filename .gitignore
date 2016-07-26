@@ -1,2 +1,4 @@
 /target/
 /test-output/
+/Selenium.logs
+/Manual.logs
