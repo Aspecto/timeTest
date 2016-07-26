@@ -101,7 +101,7 @@ public class SeleniumBase {
 		for (Pair<String, Period> pair : PeriodList) {
 			output.append(pair.getDescription() + ";");
 		}
-		output.append("Test zakończony");
+		output.append("Test zakończony;");
 		output.append("Czas trwania testu;");
 		output.append("\ntestName;");
 		for (Pair<String, Period> pair : PeriodList) {
