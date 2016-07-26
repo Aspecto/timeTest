@@ -14,11 +14,11 @@ public class RegisterTestListener extends RegisterBase implements ITestListener	
 	}
 
 	public void onTestSuccess(ITestResult result) {
-		log.debug(result.getName()+" zakończony powodzeniem\n\nCzas trwania testu: "+printPeriod(result.getEndMillis()-result.getStartMillis()));
+		log.debug(result.getName()+" zakończony powodzeniem\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
 		if(consoleOutputEnabled)
 		{
 			printToConsole();
-			System.out.println(result.getName()+" zakończony powodzeniem\n\nCzas trwania testu: "+printPeriod(result.getEndMillis()-result.getStartMillis()));
+			System.out.println(result.getName()+" zakończony powodzeniem\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
 		}
 		try {
 			if(fileOutputEnabled)
@@ -31,7 +31,7 @@ public class RegisterTestListener extends RegisterBase implements ITestListener	
 	}
 
 	public void onTestFailure(ITestResult result) {
-		log.debug("Test zakończony niepowodzeniem\n\nCzas trwania testu: "+printPeriod(result.getEndMillis()-result.getStartMillis()));
+		log.debug("Test zakończony niepowodzeniem\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
 		if(consoleOutputEnabled)
 		{
 			printToConsole();
@@ -64,12 +64,6 @@ public class RegisterTestListener extends RegisterBase implements ITestListener	
 
 	public void onFinish(ITestContext context) {
 		// TODO Auto-generated method stub
-		try {
-			output.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	//	log.debug(context);
 	}
 

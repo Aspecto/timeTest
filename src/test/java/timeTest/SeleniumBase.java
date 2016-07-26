@@ -20,22 +20,29 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
 
+
 public class SeleniumBase {
 	Logger log = Logger.getLogger("TestLog");
 	protected WebDriver driver;
 	protected String baseUrl;
 	protected StringBuffer verificationErrors = new StringBuffer();
 	protected static BufferedWriter output;
+	protected static BufferedWriter outputStats;
 	protected static boolean consoleOutputEnabled = false;
+	protected static boolean printOperationNames = false;
 	protected static boolean fileOutputEnabled = false;
+	protected static int operationCount = 0;
 	protected static List<Pair<String, Period>> PeriodList = new ArrayList<Pair<String, Period>>();
-	protected PeriodFormatter seconds = new PeriodFormatterBuilder().appendSecondsWithMillis().appendSuffix("s").toFormatter();
+	protected PeriodFormatter seconds = new PeriodFormatterBuilder().appendSecondsWithMillis().toFormatter();
 	
-	protected void setCustomOutputs(String reportFilePath, String fileOutput, String consoleOutput) {
+	protected void setCustomOutputs(String reportFilePath, String fileOutput, String consoleOutput, String operationNames, int countedOperations) {
+		operationCount = countedOperations;
 		if (consoleOutput.equals("true"))
 			consoleOutputEnabled = true;
 		if (fileOutput.equals("true"))
 			fileOutputEnabled = true;
+		if (operationNames.equals("true"))
+			printOperationNames = true;
 		if (fileOutputEnabled) {
 			try {
 				output = new BufferedWriter(new FileWriter(reportFilePath, true));
@@ -97,23 +104,35 @@ public class SeleniumBase {
     
 
 	protected void printToFile(String testName, String result, long totalTime) throws IOException {
-		output.append("\nRozpoczynam test;");
-		for (Pair<String, Period> pair : PeriodList) {
-			output.append(pair.getDescription() + ";");
+		if(printOperationNames)
+		{
+			output.append("Rozpoczynam test;");
+			for (Pair<String, Period> pair : PeriodList) {
+				output.append(pair.getDescription() + ";");
+			}
+			for(int i=0;i<operationCount;i++)
+			{
+				output.append(";");
+			}
+			output.append("Czas trwania testu;");
+			output.append("Test zakończony;\n");
 		}
-		output.append("Test zakończony;");
-		output.append("Czas trwania testu;");
-		output.append("\ntestName;");
+		output.append("testName;");
 		for (Pair<String, Period> pair : PeriodList) {
 			output.append(printPeriod(pair.getPeriod())+";");
 		}
-		output.append(result+ ";");
+		for(int i=0;i<operationCount;i++)
+		{
+			output.append(";");
+		}
 		output.append(printPeriod(totalTime) + ";");
+		output.append(result+ ";\n");
 	}
+	
 	
 	protected void printToConsole() {
 		for (Pair<String, Period> pair : PeriodList) {
-			System.out.println(pair.getDescription() + printPeriod(pair.getPeriod())+"\n");
+			System.out.println(pair.getDescription() + ": " + printPeriod(pair.getPeriod())+"\n");
 		}
 	}
 
@@ -135,23 +154,35 @@ public class SeleniumBase {
 	protected void getDriverAndCalcPeriod(String URL, String logText) throws IOException {
 		long start = System.currentTimeMillis();
 		getURL(URL);
-		addPeriodToCustomOutputs(logText,System.currentTimeMillis()-start);
-		log.debug(logText + printPeriod(System.currentTimeMillis()-start)+"\n");
+		if(operationCount>0)
+		{
+			addPeriodToCustomOutputs(logText,System.currentTimeMillis()-start);
+			operationCount--;
+		}
+		log.debug(logText + ": " + printPeriod(System.currentTimeMillis()-start)+"\n");
 	}
 
 	protected void clickElementAndCalcPeriod(By by, String logText) throws IOException {
 		long start = System.currentTimeMillis();
 		clickElement(by);
-		addPeriodToCustomOutputs(logText, System.currentTimeMillis()-start);
-		log.debug(logText + printPeriod(System.currentTimeMillis()-start)+"\n");
+		if(operationCount>0)
+		{
+			addPeriodToCustomOutputs(logText, System.currentTimeMillis()-start);
+			operationCount--;
+		}
+		log.debug(logText + ": " + printPeriod(System.currentTimeMillis()-start)+"\n");
 	}
 
 	protected void selectElementByVisibleTextAndCalcPeriod(By by, String text, String logText)
 			throws IOException {
 		long start = System.currentTimeMillis();
 		selectElementByVisbleText(by,text);
-		addPeriodToCustomOutputs(logText,System.currentTimeMillis()-start);
-		log.debug(logText + printPeriod(System.currentTimeMillis()-start)+"\n");
+		if(operationCount>0)
+		{
+			addPeriodToCustomOutputs(logText,System.currentTimeMillis()-start);
+			operationCount--;
+		}
+		log.debug(logText + ": " + printPeriod(System.currentTimeMillis()-start)+"\n");
 		
 	}
 }

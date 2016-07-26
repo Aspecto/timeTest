@@ -15,15 +15,16 @@ public class RegisterBase extends SeleniumBase{
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	@Parameters({ "reportFilePath", "fileOutput", "consoleOutput" })
-	public void setUp(String reportFilePath, String fileOutput, String consoleOutput) throws Exception {
-		setCustomOutputs(reportFilePath, fileOutput, consoleOutput);
+	@Parameters({ "reportFilePath", "fileOutput", "consoleOutput", "operationNames", "countedOperations"})
+	public void setUp(String reportFilePath, String fileOutput, String consoleOutput, String operationNames, int countedOperations) throws Exception {
+		setCustomOutputs(reportFilePath, fileOutput, consoleOutput, operationNames, countedOperations);
 		setUpBrowser();
 	}
 
 
 	@AfterClass(alwaysRun = true)
 	public void tearDown() throws Exception {
+		output.close();
 		quit();
 		String verificationErrorString = verificationErrors.toString();
 		if (!"".equals(verificationErrorString)) {
