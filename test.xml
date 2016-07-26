@@ -2,12 +2,12 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="Time_test_suite">
-<parameter name="reportFilePath" value="C:\TEST\test.txt" />
+<parameter name="reportFilePath" value="C:\TEST\test.csv" />
 <parameter name="fileOutput" value="true" />
 <parameter name="consoleOutput" value="true" />
-  <test name="time_test">
+  <test name="TimeTest">
     <classes>
-       <class name="time_test.time_test" />
+       <class name="timeTest.TimeTest" />
     </classes>
   </test>
 </suite>  	
