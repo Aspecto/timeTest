@@ -28,7 +28,6 @@ public class SeleniumBase {
 	protected String baseUrl;
 	protected StringBuffer verificationErrors = new StringBuffer();
 	protected static BufferedWriter output;
-	protected static BufferedWriter outputStats;
 	protected static boolean consoleOutputEnabled = false;
 	protected static boolean printOperationNames = false;
 	protected static boolean fileOutputEnabled = false;
