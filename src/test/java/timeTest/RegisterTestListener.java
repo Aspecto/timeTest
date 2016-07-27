@@ -1,5 +1,4 @@
 package timeTest;
-import java.io.IOException;
 import org.testng.ITestContext ;		
 import org.testng.ITestListener ;		
 import org.testng.ITestResult ;		
@@ -14,37 +13,11 @@ public class RegisterTestListener extends RegisterBase implements ITestListener	
 	}
 
 	public void onTestSuccess(ITestResult result) {
-		log.debug(result.getName()+" zakończony powodzeniem\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
-		if(consoleOutputEnabled)
-		{
-			printToConsole();
-			System.out.println(result.getName()+" zakończony powodzeniem\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
-		}
-		try {
-			if(fileOutputEnabled)
-			{
-				printToFile(result.getName() , "powodzeniem", result.getEndMillis()-result.getStartMillis());
-			}
-		} catch (IOException e) {
-			log.debug(result.getName() + " " + e.getMessage());
-		}
+		testFinished(result, "powodzeniem");
 	}
 
 	public void onTestFailure(ITestResult result) {
-		log.debug("Test zakończony niepowodzeniem\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
-		if(consoleOutputEnabled)
-		{
-			printToConsole();
-			System.out.println("Test zakończony niepowodzeniem\n\nCzas trwania testu: "+printPeriod(result.getEndMillis()-result.getStartMillis()));
-		}
-		try {
-			if(fileOutputEnabled)
-			{
-				printToFile(result.getName() , "niepowodzeniem", result.getEndMillis()-result.getStartMillis());
-			}
-		} catch (IOException e) {
-			log.debug(result.getName() + " " + e.getMessage());
-		}
+		testFinished(result, "niepowodzeniem");
 	}
 
 	public void onTestSkipped(ITestResult result) {

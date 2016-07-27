@@ -18,6 +18,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.ITestResult;
 
 
 
@@ -133,6 +134,23 @@ public class SeleniumBase {
 	protected void printToConsole() {
 		for (Pair<String, Period> pair : PeriodList) {
 			System.out.println(pair.getDescription() + ": " + printPeriod(pair.getPeriod())+"\n");
+		}
+	}
+	
+	protected void testFinished(ITestResult result, String resultString) {
+		log.debug(result.getName()+" zakończony " + resultString + "\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
+		if(consoleOutputEnabled)
+		{
+			printToConsole();
+			System.out.println(result.getName()+" zakończony"  + resultString + "\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
+		}
+		try {
+			if(fileOutputEnabled)
+			{
+				printToFile(result.getName() , resultString, result.getEndMillis()-result.getStartMillis());
+			}
+		} catch (IOException e) {
+			log.debug(result.getName() + " " + e.getMessage());
 		}
 	}
 
