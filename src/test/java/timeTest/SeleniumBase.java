@@ -33,7 +33,7 @@ public class SeleniumBase {
 	protected static boolean fileOutputEnabled = false;
 	protected static int operationCount = 0;
 	protected static List<Pair<String, Period>> PeriodList = new ArrayList<Pair<String, Period>>();
-	protected PeriodFormatter seconds = new PeriodFormatterBuilder().appendSeconds().appendPrefix(",").appendMillis3Digit().toFormatter();
+	protected PeriodFormatter seconds = new PeriodFormatterBuilder().printZeroAlways().appendSeconds().appendPrefix(",").appendMillis3Digit().toFormatter();
 	
 	protected void setCustomOutputs(String reportFilePath, String fileOutput, String consoleOutput, String operationNames, int countedOperations) {
 		operationCount = countedOperations;
@@ -141,7 +141,7 @@ public class SeleniumBase {
 		if(consoleOutputEnabled)
 		{
 			printToConsole();
-			System.out.println(result.getName()+" zakończony"  + resultString + "\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
+			System.out.println(result.getName()+" zakończony "  + resultString + "\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
 		}
 		try {
 			if(fileOutputEnabled)
