@@ -34,7 +34,7 @@ public class SeleniumBase {
 	protected static boolean fileOutputEnabled = false;
 	protected static int operationCount = 0;
 	protected static List<Pair<String, Period>> PeriodList = new ArrayList<Pair<String, Period>>();
-	protected PeriodFormatter seconds = new PeriodFormatterBuilder().appendSecondsWithMillis().toFormatter();
+	protected PeriodFormatter seconds = new PeriodFormatterBuilder().appendSeconds().appendPrefix(",").appendMillis3Digit().toFormatter();
 	
 	protected void setCustomOutputs(String reportFilePath, String fileOutput, String consoleOutput, String operationNames, int countedOperations) {
 		operationCount = countedOperations;
