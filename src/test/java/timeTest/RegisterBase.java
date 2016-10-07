@@ -8,6 +8,8 @@ import org.testng.annotations.Parameters;
 
 public class RegisterBase extends SeleniumBase{
 
+	protected String path = "C:\\TEST\\asfa.txt";
+
 	protected void setUpBrowser()
 	{
 		setUpBrowser(Browser.Firefox,"https://sso.dev.seup.corp.ialbatros.net/login?service=https%3A%2F%2Fdev.seup.corp.ialbatros.net#!/");
