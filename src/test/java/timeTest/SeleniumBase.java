@@ -5,8 +5,7 @@ package timeTest;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -14,11 +13,17 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 
 
@@ -31,12 +36,11 @@ public class SeleniumBase {
 	protected static boolean consoleOutputEnabled = false;
 	protected static boolean printOperationNames = false;
 	protected static boolean fileOutputEnabled = false;
-	protected static int operationCount = 0;
-	protected static List<Pair<String, Period>> PeriodList = new ArrayList<Pair<String, Period>>();
+	protected static Multimap<String,Period> PeriodMap = ArrayListMultimap.create();
 	protected PeriodFormatter seconds = new PeriodFormatterBuilder().printZeroAlways().appendSeconds().appendPrefix(",").appendMillis3Digit().toFormatter();
+	protected WebDriverWait wait;
 	
-	protected void setCustomOutputs(String reportFilePath, String fileOutput, String consoleOutput, String operationNames, int countedOperations) {
-		operationCount = countedOperations;
+	protected void setCustomOutputs(String reportFilePath, String fileOutput, String consoleOutput, String operationNames) {
 		if (consoleOutput.equals("true"))
 			consoleOutputEnabled = true;
 		if (fileOutput.equals("true"))
@@ -65,6 +69,8 @@ public class SeleniumBase {
 		}
 		baseUrl = URL;
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
+		wait = new WebDriverWait(driver, 2000);
 	}
 	
     protected void getURL(String URL)
@@ -82,9 +88,14 @@ public class SeleniumBase {
     	new Select(driver.findElement(by)).selectByVisibleText(text);
     }
     
-    protected WebElement findElement(By by)
+    protected WebElement findElement(By by) throws InterruptedException
     {
-    	return driver.findElement(by);
+    	WebElement element = driver.findElement(by);
+    	Thread.sleep(20);
+    	wait.until(ExpectedConditions.visibilityOf(element));
+    	Thread.sleep(20);
+    	wait.until(ExpectedConditions.elementToBeClickable(element));
+    	return element;
     }
     
     protected String getTitle()
@@ -97,7 +108,7 @@ public class SeleniumBase {
     	driver.quit();
     }
     
-    protected String getFirstSelectedOptionText(By by)
+    protected String getFirstSelectedOptionText(By by) throws InterruptedException
     {
     	return new Select(findElement(by)).getFirstSelectedOption().getText();
     }
@@ -106,41 +117,27 @@ public class SeleniumBase {
 	protected void printToFile(String testName, String result, long totalTime) throws IOException {
 		if(printOperationNames)
 		{
-			output.append("Rozpoczynam test;");
-			for (Pair<String, Period> pair : PeriodList) {
-				output.append(pair.getDescription() + ";");
-			}
-			for(int i=0;i<operationCount;i++)
-			{
-				output.append(";");
-			}
+			output.append("Nazwa testu;");
 			output.append("Czas trwania testu;");
-			output.append("Test zakończony;\n");
+			output.append("Test zakończony;");
+			for (Entry<String, Period> entry : PeriodMap.entries()) {
+				output.append(entry.getKey() + ";");
+			}
+			output.append("\n");
 		}
 		output.append("testName;");
-		for (Pair<String, Period> pair : PeriodList) {
-			output.append(printPeriod(pair.getPeriod())+";");
-		}
-		for(int i=0;i<operationCount;i++)
-		{
-			output.append(";");
-		}
 		output.append(printPeriod(totalTime) + ";");
-		output.append(result+ ";\n");
-	}
-	
-	
-	protected void printToConsole() {
-		for (Pair<String, Period> pair : PeriodList) {
-			System.out.println(pair.getDescription() + ": " + printPeriod(pair.getPeriod())+"\n");
+		output.append(result+ ";");
+		for (Entry<String, Period> entry : PeriodMap.entries()) {
+			output.append(printPeriod(entry.getValue())+";");
 		}
+		output.append("\n");
 	}
 	
 	protected void testFinished(ITestResult result, String resultString) {
 		log.debug(result.getName()+" zakończony " + resultString + "\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
 		if(consoleOutputEnabled)
 		{
-			printToConsole();
 			System.out.println(result.getName()+" zakończony "  + resultString + "\n\nCzas trwania testu(w sekundach): "+printPeriod(result.getEndMillis()-result.getStartMillis()));
 		}
 		try {
@@ -148,14 +145,14 @@ public class SeleniumBase {
 			{
 				printToFile(result.getName() , resultString, result.getEndMillis()-result.getStartMillis());
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.debug(result.getName() + " " + e.getMessage());
 		}
 	}
 
 	protected void addPeriodToCustomOutputs(String logText, long periodInMillis)
 	{
-		PeriodList.add(new Pair<String, Period>(logText, new Period(periodInMillis)));
+		PeriodMap.put(logText, new Period(periodInMillis));
 	}
 	
 	protected String printPeriod(long millis)
@@ -171,35 +168,43 @@ public class SeleniumBase {
 	protected void getDriverAndCalcPeriod(String URL, String logText) throws IOException {
 		long start = System.currentTimeMillis();
 		getURL(URL);
-		if(operationCount>0)
-		{
-			addPeriodToCustomOutputs(logText,System.currentTimeMillis()-start);
-			operationCount--;
-		}
-		log.debug(logText + ": " + printPeriod(System.currentTimeMillis()-start)+"\n");
+		long time = System.currentTimeMillis()-start;
+		addPeriodToCustomOutputs(logText,time);
+		if(consoleOutputEnabled)
+			System.out.println(logText+": " + printPeriod(time) + "\n");
+		log.debug(logText + ": " + printPeriod(time)+"\n");
 	}
 
 	protected void clickElementAndCalcPeriod(By by, String logText) throws IOException {
 		long start = System.currentTimeMillis();
 		clickElement(by);
-		if(operationCount>0)
-		{
-			addPeriodToCustomOutputs(logText, System.currentTimeMillis()-start);
-			operationCount--;
-		}
-		log.debug(logText + ": " + printPeriod(System.currentTimeMillis()-start)+"\n");
+		long time = System.currentTimeMillis()-start;
+		addPeriodToCustomOutputs(logText, time);
+		if(consoleOutputEnabled)
+			System.out.println(logText+": " + printPeriod(time) + "\n");
+		log.debug(logText + ": " + printPeriod(time)+"\n");
 	}
 
 	protected void selectElementByVisibleTextAndCalcPeriod(By by, String text, String logText)
 			throws IOException {
 		long start = System.currentTimeMillis();
 		selectElementByVisbleText(by,text);
-		if(operationCount>0)
-		{
-			addPeriodToCustomOutputs(logText,System.currentTimeMillis()-start);
-			operationCount--;
-		}
-		log.debug(logText + ": " + printPeriod(System.currentTimeMillis()-start)+"\n");
-		
+		long time = System.currentTimeMillis()-start;
+		addPeriodToCustomOutputs(logText,time);
+		if(consoleOutputEnabled)
+			System.out.println(logText+": " + printPeriod(time) + "\n");
+		log.debug(logText + ": " + printPeriod(time)+"\n");		
 	}
+	
+	protected void sendKeysAndCalcPeriod(By by, String text, String logText)
+			throws IOException, InterruptedException {
+		long start = System.currentTimeMillis();
+		findElement(by).sendKeys(text);
+		long time = System.currentTimeMillis()-start;
+		addPeriodToCustomOutputs(logText,time);
+		if(consoleOutputEnabled)
+			System.out.println(logText+": " + printPeriod(time) + "\n");
+		log.debug(logText + ": " + printPeriod(time)+"\n");		
+	}
+	
 }

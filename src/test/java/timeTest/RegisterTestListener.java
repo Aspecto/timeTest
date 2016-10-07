@@ -21,13 +21,11 @@ public class RegisterTestListener extends RegisterBase implements ITestListener	
 	}
 
 	public void onTestSkipped(ITestResult result) {
-		// TODO Auto-generated method stub
-	//	log.debug(result);
+		testFinished(result, "przerwaniem");
 	}
 
 	public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-		// TODO Auto-generated method stub
-	//	log.debug(result);
+		testFinished(result, "niepowodzeniem z annotacją successPercentage");
 	}
 
 	public void onStart(ITestContext context) {

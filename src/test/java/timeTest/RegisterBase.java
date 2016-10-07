@@ -10,14 +10,14 @@ public class RegisterBase extends SeleniumBase{
 
 	protected void setUpBrowser()
 	{
-		setUpBrowser(Browser.Firefox,"https://www.rejestrymedyczne.csioz.gov.pl/");
-		log.debug("Setting Firefox for https://www.rejestrymedyczne.csioz.gov.pl/");
+		setUpBrowser(Browser.Firefox,"https://sso.dev.seup.corp.ialbatros.net/login?service=https%3A%2F%2Fdev.seup.corp.ialbatros.net#!/");
+		log.debug("Setting Firefox for https://sso.dev.seup.corp.ialbatros.net/login?service=https%3A%2F%2Fdev.seup.corp.ialbatros.net#!/");
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	@Parameters({ "reportFilePath", "fileOutput", "consoleOutput", "operationNames", "countedOperations"})
-	public void setUp(String reportFilePath, String fileOutput, String consoleOutput, String operationNames, int countedOperations) throws Exception {
-		setCustomOutputs(reportFilePath, fileOutput, consoleOutput, operationNames, countedOperations);
+	@Parameters({ "reportFilePath", "fileOutput", "consoleOutput", "operationNames"})
+	public void setUp(String reportFilePath, String fileOutput, String consoleOutput, String operationNames) throws Exception {
+		setCustomOutputs(reportFilePath, fileOutput, consoleOutput, operationNames);
 		setUpBrowser();
 	}
 
