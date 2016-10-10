@@ -16,8 +16,8 @@ public class TimeTest extends RegisterBase{
 	@Test
 	public void base_test() throws Exception {
 		getDriverAndCalcPeriod(baseUrl + "/", "Czas otwarcia strony(w sekundach)");
-		sendKeysAndCalcPeriod(By.id("username"), "zbochenek", "Czas wpisywania loginu(w sekundach)");
-		sendKeysAndCalcPeriod(By.id("password"), "Seup123$", "Czas wpisywania hasła(w sekundach)");
+		sendKeysAndCalcPeriod(By.id("username"), "", "Czas wpisywania loginu(w sekundach)");
+		sendKeysAndCalcPeriod(By.id("password"), "", "Czas wpisywania hasła(w sekundach)");
 		clickElementAndCalcPeriod(By.xpath("//button[@type='submit']"), "Czas logowania(w sekundach)");
 		Thread.sleep(3000);
 		clickElementAndCalcPeriod(By.cssSelector("span.select-field-icon-chevron.btn"), "Czas wybierania systemu(w sekundach)");
